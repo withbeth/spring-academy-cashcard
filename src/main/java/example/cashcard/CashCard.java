@@ -18,6 +18,10 @@ public class CashCard {
         this.amount = amount;
     }
 
+    public CashCard(Double amount) {
+        this(null, amount);
+    }
+
     public Long getId() {
         return id;
     }

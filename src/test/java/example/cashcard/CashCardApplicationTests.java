@@ -49,4 +49,13 @@ class CashCardApplicationTests {
         assertThat(response.getBody()).isBlank();
     }
 
+    @Test
+    void shouldCreateANewCashCard() {
+        CashCard newCashCard = new CashCard(250.00);
+        ResponseEntity<Void> response = restTemplate.postForEntity(BASE_ENDPOINT, newCashCard, Void.class);
+        // TODO : we should assert 201 CREATED
+        // TODO : we should check location header
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
 }
