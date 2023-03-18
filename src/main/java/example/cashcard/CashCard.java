@@ -7,11 +7,14 @@ import java.util.Objects;
 public class CashCard {
 
     @Id
-    private final Long id;
-    private final Double amount;
+    private Long id;
+    private Double amount;
 
     // TODO : do we need default constructor?
     // TODO : do we need a constructor with Id?
+
+    public CashCard() {
+    }
 
     public CashCard(Long id, Double amount) {
         this.id = id;
