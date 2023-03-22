@@ -3,6 +3,7 @@ package example.cashcard;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import net.minidev.json.JSONArray;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -54,6 +55,21 @@ class CashCardApplicationTests {
 
         double amount = documentContext.read("$[0].amount");
         assertThat(amount).isEqualTo(150.00);
+    }
+
+    @DisplayName("page/size/sort미지정시, page=0&size=20&sort=amount,desc로 캐시카드목록을 취득할수 있다")
+    @Test
+    void shouldReturnASortedPageOfCashCardsWithNoParametersAndUseDefaultValues() {
+        ResponseEntity<String> response = restTemplate.getForEntity(BASE_ENDPOINT, String.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        DocumentContext documentContext = JsonPath.parse(response.getBody());
+        JSONArray page = documentContext.read("$[*]");
+        assertThat(page.size()).isEqualTo(3);
+
+        JSONArray amounts = documentContext.read("$..amount");
+        assertThat(amounts).containsExactly(150.00, 123.45, 1.00);
     }
 
     @Test
