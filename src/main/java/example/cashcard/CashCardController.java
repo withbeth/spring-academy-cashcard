@@ -20,7 +20,12 @@ public class CashCardController {
 
     @GetMapping
     ResponseEntity<Iterable<CashCard>> findAll(Pageable pageable) {
-        Page<CashCard> page = cashCardRepository.findAll(PageRequest.of(pageable.getPageNumber(), pageable.getPageSize()));
+        Page<CashCard> page = cashCardRepository.findAll(
+                PageRequest.of(
+                        pageable.getPageNumber(),
+                        pageable.getPageSize(),
+                        pageable.getSort()
+                ));
         return ResponseEntity.ok(page.toList());
     }
 
