@@ -2,6 +2,7 @@ package example.cashcard;
 
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
+import net.minidev.json.JSONArray;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -31,6 +32,23 @@ class CashCardApplicationTests {
     }
 
     @Test
+    void shouldReturnAllCashCardsWhenListIsRequested() {
+        ResponseEntity<String> response = restTemplate.getForEntity(BASE_ENDPOINT, String.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        DocumentContext documentContext = JsonPath.parse(response.getBody());
+        int cashCardCounts = documentContext.read("$.length()");
+        assertThat(cashCardCounts).isEqualTo(3);
+
+        JSONArray ids = documentContext.read("$..id");
+        assertThat(ids).containsExactlyInAnyOrder(99, 100, 101);
+
+        JSONArray amounts = documentContext.read("$..amount");
+        assertThat(amounts).containsExactlyInAnyOrder(123.45, 1.00, 150.00);
+    }
+
+    @Test
     void shouldReturnACashCardWhenDataIsSaved() {
         ResponseEntity<String> response = restTemplate.getForEntity(BASE_ENDPOINT + "/99", String.class);
 
@@ -46,7 +64,7 @@ class CashCardApplicationTests {
 
     @Test
     void shouldNotReturnACashCardWithAnUnknownId() {
-        ResponseEntity<String> response = restTemplate.getForEntity(BASE_ENDPOINT + "/100", String.class);
+        ResponseEntity<String> response = restTemplate.getForEntity(BASE_ENDPOINT + "/999", String.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
         assertThat(response.getBody()).isBlank();
@@ -71,5 +89,7 @@ class CashCardApplicationTests {
         Double amount = parsedBody.read("$.amount", Double.class);
         assertThat(amount).isEqualTo(250.00);
     }
+
+
 
 }
