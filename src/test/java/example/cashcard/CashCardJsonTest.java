@@ -10,7 +10,10 @@ import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+
 /**
+ * Test class for verifying data contracts between client and server
+ *
  * Q. @JsonTest?
  * A. Annotation for a JSON test that focuses only on JSON serialization.
  * Using this annotation will disable full auto-configuration and instead apply only configuration relevant to JSON tests (i.e. @JsonComponent, Jackson Module)
@@ -32,7 +35,7 @@ class CashCardJsonTest {
     void setUp() {
         cashCards = new CashCard[]{
                 new CashCard(99L, 123.45),
-                new CashCard(100L, 100.00),
+                new CashCard(100L, 1.00),
                 new CashCard(101L, 150.00)
         };
     }
@@ -54,15 +57,32 @@ class CashCardJsonTest {
     @Test
     void cashCardDeserializationTest() throws IOException {
         String expected = """
-           {
-               "id":99,
-               "amount":123.45
-           }
-           """;
+                {
+                    "id":99,
+                    "amount":123.45
+                }
+                """;
         assertThat(json.parse(expected))
                 .isEqualTo(new CashCard(99L, 123.45));
         assertThat(json.parseObject(expected).getId()).isEqualTo(99L);
         assertThat(json.parseObject(expected).getAmount()).isEqualTo(123.45);
+    }
+
+    @Test
+    void cashCardListSerializationTest() throws IOException {
+        assertThat(jsonList.write(cashCards)).isStrictlyEqualToJson("list.json");
+    }
+
+    @Test
+    void cashCardListDeserializationTest() throws IOException {
+        String expected = """
+                [
+                    {"id":99, "amount": 123.45},
+                    {"id":100, "amount": 100.00},
+                    {"id":101, "amount": 150.00}
+                ]
+                """;
+        assertThat(jsonList.parse(expected)).isEqualTo(cashCards);
     }
 
 }
