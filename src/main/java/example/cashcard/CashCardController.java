@@ -1,10 +1,9 @@
 package example.cashcard;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
+import java.net.URI;
 
 @RestController
 @RequestMapping("/cashcards")
@@ -24,7 +23,8 @@ public class CashCardController {
     }
 
     @PostMapping
-    ResponseEntity<Void> create() {
-        return null;
+    ResponseEntity<Void> create(@RequestBody CashCard cashCard) {
+        CashCard saved = cashCardRepository.save(cashCard);
+        return ResponseEntity.created(URI.create("/cashcards/" + saved.getId())).build();
     }
 }
